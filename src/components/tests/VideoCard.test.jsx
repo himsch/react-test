@@ -4,30 +4,16 @@ import VideoCard from '../VideoCard/VideoCard';
 import '@testing-library/jest-dom';
 import { formatAgo } from '../../util/date';
 import userEvent from '@testing-library/user-event';
+import { fakeVideo as video } from '../../tests/videos';
+import { withRouter } from '../../tests/utils';
 
 describe('VideoCard', () => {
-  const video = {
-    id: 1,
-    snippet: {
-      title: 'title',
-      channelId: '1',
-      channelTitle: 'channelTitle',
-      publishedAt: new Date(),
-      thumbnails: {
-        medium: {
-          url: 'http://image/',
-        },
-      },
-    },
-  };
   const { title, channelId, channelTitle, publishedAt, thumbnails } =
     video.snippet;
 
   it('renders video item', () => {
     render(
-      <MemoryRouter>
-        <VideoCard video={video} />
-      </MemoryRouter>
+      withRouter(<Route path="/" element={<VideoCard video={video} />} />)
     );
 
     const image = screen.getByRole('img');
@@ -42,15 +28,15 @@ describe('VideoCard', () => {
       return <pre>{JSON.stringify(useLocation().state)}</pre>;
     }
     render(
-      <MemoryRouter>
-        <Routes>
+      withRouter(
+        <>
           <Route path="/" element={<VideoCard video={video} />} />
           <Route
             path={`/videos/watch/${video.id}`}
             element={<LocationStateDisplay />}
           />
-        </Routes>
-      </MemoryRouter>
+        </>
+      )
     );
 
     const card = screen.getByRole('listitem');
